@@ -1,69 +1,47 @@
+import cors from "cors";
 import express from "express";
-import { devices, vulnerabilities } from "./db.js";
+import { deviceVulnerabilities, devices, vulnerabilities } from "./db.js";
 
 const app = express();
-const port = 3000;
+app.use(cors());
+const host = "localhost";
+const port = 8000;
 
-app.get("/devices", (req, res) => {
-  res.json(
-    devices.map(({ id, IPv4, hostname, OperatingSystem, Manufacturer }) => ({
-      id,
-      IPv4,
-      hostname,
-      OperatingSystem,
-      Manufacturer,
-    }))
-  );
+app.get("/devices", (_req, res) => {
+  res.json(devices);
 });
 
 app.get("/devices/:id", (req, res) => {
   const device = devices.find((device) => device.id === Number(req.params.id));
   if (device) {
-    const { id, IPv4, hostname, OperatingSystem, Manufacturer } = device;
-    res.json({ id, IPv4, hostname, OperatingSystem, Manufacturer });
+    res.json(device);
   } else {
     res.status(404).send("Device not found");
   }
 });
 
 app.get("/devices/:id/vulnerabilities", (req, res) => {
-  const device = devices.find((device) => device.id === Number(req.params.id));
-  if (device && device.vulnerabilities) {
-    const deviceVulnerabilities = vulnerabilities.filter((vulnerability) =>
-      device.vulnerabilities.includes(vulnerability.CVE)
+  const deviceVulnerability = deviceVulnerabilities.find(
+    (deviceVulnerability) =>
+      deviceVulnerability.deviceId === Number(req.params.id)
+  );
+  if (deviceVulnerability) {
+    const deviceVulnerabilities = deviceVulnerability.vulnerabilities.map(
+      (vulnerabilityId) =>
+        vulnerabilities.find(
+          (vulnerability) => vulnerability.CVE === vulnerabilityId
+        )
     );
-    res.json(
-      deviceVulnerabilities.map(
-        ({ CVE, Name, Severity, Description, ExploitPresent }) => ({
-          CVE,
-          Name,
-          Severity,
-          Description,
-          ExploitPresent,
-        })
-      )
-    );
+    res.json(deviceVulnerabilities);
   } else {
-    res
-      .status(404)
-      .send("Device not found or no vulnerabilities found for device");
+    res.status(404).send("Device not found");
   }
 });
 
-app.get("/vulnerabilities", (req, res) => {
-  res.json(
-    vulnerabilities.map(
-      ({ CVE, Name, Severity, Description, ExploitPresent }) => ({
-        CVE,
-        Name,
-        Severity,
-        Description,
-        ExploitPresent,
-      })
-    )
-  );
+app.get("/vulnerabilities", (_req, res) => {
+  res.json(vulnerabilities);
 });
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running at http://${host}:${port}`);
 });

@@ -73,3 +73,10 @@ export const vulnerabilities = [
     ExploitPresent: true,
   },
 ];
+
+export const deviceVulnerabilities = [
+  { deviceId: 1, vulnerabilities: ["CVE-2021-1234", "CVE-2021-1235"] },
+  { deviceId: 2, vulnerabilities: ["CVE-2021-1235"] },
+  { deviceId: 3, vulnerabilities: ["CVE-2021-1236"] },
+  { deviceId: 4, vulnerabilities: ["CVE-2021-1234", "CVE-2021-1235"] },
+];
