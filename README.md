@@ -1,16 +1,16 @@
 ## Basic requirements:
 
-[x] The user can see a list of the devices with the relevant data
-[x] The user can see the details of a device on a single page
-[x] The user can see a list of the vulnerabilities with the relevant data
-[x] The user can see the details of a vulnerability on a single page
+- [x] The user can see a list of the devices with the relevant data
+- [x] The user can see the details of a device on a single page
+- [x] The user can see a list of the vulnerabilities with the relevant data
+- [x] The user can see the details of a vulnerability on a single page
 
 ## Advanced requirements for senior developers:
 
-[x] The lists of the devices and vulnerabilities are sortable
-[x] The lists of the devices and vulnerabilities can be exported as CSV
-[x] The Entries in a lists can be selected, so that only the selected entries are exported
-[x] The sorting of the lists is maintained after a page reload
+- [x] The lists of the devices and vulnerabilities are sortable
+- [x] The lists of the devices and vulnerabilities can be exported as CSV
+- [x] The Entries in a lists can be selected, so that only the selected entries are exported
+- [x] The sorting of the lists is maintained after a page reload
 
 ## Project Structure
 
