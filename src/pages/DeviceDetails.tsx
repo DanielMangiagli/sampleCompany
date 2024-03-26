@@ -3,7 +3,8 @@ import {
   useFetchDeviceDetails,
   useFetchDeviceVulnerabilities,
 } from "../api/devices";
-import Table from "../components/Table";
+import { NoItemsMsg } from "../components/States/States";
+import Table from "../components/Table/Table";
 
 function DeviceDetails() {
   const { id } = useParams<{ id: string }>();
@@ -33,32 +34,54 @@ function DeviceDetails() {
     { key: "ExploitPresent", header: "Exploit Present" },
   ];
 
+  if (!device) {
+    return <NoItemsMsg />;
+  }
+
+  const deviceProperties = [
+    { label: "ID", value: device.id },
+    { label: "IPv4", value: device.IPv4 },
+    { label: "Hostname", value: device.hostname },
+    { label: "MAC", value: device.MAC },
+    { label: "Operating System", value: device.OperatingSystem },
+    { label: "Manufacturer", value: device.Manufacturer },
+    { label: "Model", value: device.model },
+    { label: "Open Ports", value: device.OpenPorts.join(", ") },
+  ];
+
   return (
     <>
-      {isLoadingDevice && <div>Loading device...</div>}
-      {isLoadingVulnerabilities && <div>Loading vulnerabilities...</div>}
-
-      {device && (
-        <div>
-          <p>ID: {device.id}</p>
-          <p>IPv4: {device.IPv4}</p>
-          <p>Hostname: {device.hostname}</p>
-          <p>MAC: {device.MAC}</p>
-          <p>Operating System: {device.OperatingSystem}</p>
-          <p>Manufacturer: {device.Manufacturer}</p>
-          <p>Model: {device.model}</p>
-          <p>Open Ports: {device.OpenPorts.join(", ")}</p>
-        </div>
+      {isLoadingDevice && (
+        <div className="text-lg text-blue-500">Loading device...</div>
+      )}
+      {isLoadingVulnerabilities && (
+        <div className="text-lg text-blue-500">Loading vulnerabilities...</div>
       )}
 
+      <section className="p-4 bg-white rounded shadow">
+        <h2 className="text-xl font-bold mb-4">Device Details</h2>
+        <div className="flex flex-wrap">
+          {deviceProperties.map((property) => (
+            <div key={property.value} className="w-1/2">
+              <strong>{property.label}:</strong> {property.value}
+            </div>
+          ))}
+        </div>
+      </section>
+
       {vulnerabilities && (
-        <Table
-          data={
-            Array.isArray(vulnerabilities) ? vulnerabilities : [vulnerabilities]
-          }
-          columns={columnsVulnerabilities}
-          rowKey="CVE"
-        />
+        <section className="p-4 bg-white rounded shadow mt-4">
+          <h2 className="text-xl font-bold mb-4">Vulnerabilities</h2>
+          <Table
+            data={
+              Array.isArray(vulnerabilities)
+                ? vulnerabilities
+                : [vulnerabilities]
+            }
+            columns={columnsVulnerabilities}
+            rowKey="CVE"
+          />
+        </section>
       )}
     </>
   );

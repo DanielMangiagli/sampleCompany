@@ -1,6 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useFetchDevices } from "../api/devices.tsx";
-import Table from "../components/Table.tsx";
+import {
+  ErrorMsg,
+  LoadingMsg,
+  NoItemsMsg,
+} from "../components/States/States.tsx";
+import Table from "../components/Table/Table.tsx";
 
 function DevicesList() {
   const { data, isLoading, isError } = useFetchDevices();
@@ -19,15 +24,15 @@ function DevicesList() {
   ];
 
   if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!data) {
-    return <div>Device not found</div>;
+    return <LoadingMsg />;
   }
 
   if (isError) {
-    return <div>Error fetching devices</div>;
+    return <ErrorMsg />;
+  }
+
+  if (!data || data.length === 0) {
+    return <NoItemsMsg />;
   }
 
   return (

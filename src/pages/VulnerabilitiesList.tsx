@@ -1,5 +1,6 @@
 import { useFetchVulnerabilities } from "../api/vulnerabilities";
-import Table from "../components/Table";
+import { ErrorMsg, LoadingMsg, NoItemsMsg } from "../components/States/States";
+import Table from "../components/Table/Table";
 
 const Vulnerabilities: React.FC = () => {
   const { data, isLoading, isError } = useFetchVulnerabilities();
@@ -25,22 +26,18 @@ const Vulnerabilities: React.FC = () => {
   ];
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingMsg />;
   }
+
   if (isError) {
-    return <div>Error fetching vulnerabilities</div>;
+    return <ErrorMsg />;
   }
 
-  if (!data) {
-    return <div>Vulnerabilities not found</div>;
+  if (!data || data.length === 0) {
+    return <NoItemsMsg />;
   }
 
-  const formattedData = data.map((item) => ({
-    ...item,
-    ExploitPresent: String(item.ExploitPresent),
-  }));
-
-  return <Table data={formattedData} columns={columns} rowKey="CVE" />;
+  return <Table data={data} columns={columns} rowKey="CVE" />;
 };
 
 export default Vulnerabilities;

@@ -1,5 +1,10 @@
 import { QueryObserverResult, useQuery } from "@tanstack/react-query";
 import { Device } from "./models/devicesModel";
+import {
+  TransformedVulnerabilityType,
+  Vulnerability,
+  VulnerabilitySchema,
+} from "./models/vulnerabilitiesModel";
 
 const STALE_TIME = 1000 * 60 * 5; // 5 minutes
 
@@ -31,15 +36,24 @@ export const useFetchDeviceDetails = (
 
 export const useFetchDeviceVulnerabilities = (
   id: number
-): QueryObserverResult<Device, Error> => {
-  return useQuery<Device, Error>({
+): QueryObserverResult<TransformedVulnerabilityType[], Error> => {
+  return useQuery<TransformedVulnerabilityType[], Error>({
     queryKey: ["fetch-device-vulnerabilities", id],
-    queryFn: async () => {
+    queryFn: async (): Promise<TransformedVulnerabilityType[]> => {
       const res = await fetch(
         `http://localhost:8000/devices/${id}/vulnerabilities`
       );
-      const data: Device = await res.json();
-      return data;
+      const data: Vulnerability[] = await res.json();
+      return data.map((item) => {
+        const result = VulnerabilitySchema.safeParse(item);
+        if (!result.success) {
+          throw new Error("Data validation failed");
+        }
+        return {
+          ...result.data,
+          ExploitPresent: String(result.data.ExploitPresent),
+        };
+      });
     },
     staleTime: STALE_TIME,
   });
