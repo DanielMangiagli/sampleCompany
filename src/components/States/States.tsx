@@ -12,6 +12,6 @@ export const NoItemsMsg = () => (
 
 export const ErrorMsg = () => (
   <div className="flex justify-center items-center h-screen text-lg text-red-500">
-    Error fetching devices
+    Error fetching
   </div>
 );

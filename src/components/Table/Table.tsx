@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../Button/Button";
 import TableHeader from "./TableHeader";
 import { DataRow, exportSelectedRowsToCSV } from "./helpers/exportToCsv";
-import { sortData } from "./helpers/sorting";
+import { sortData } from "./helpers/sortData";
 
 interface Column {
   key: string;
@@ -108,6 +108,7 @@ const Table: React.FC<TableProps> = ({ data, columns, rowKey, onRowClick }) => {
                         e.target.checked
                       )
                     }
+                    data-testid={`checkbox-${row[rowKey]}`}
                   />
                 </td>
                 {columns.map((column) => (

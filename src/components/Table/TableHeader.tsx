@@ -18,7 +18,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         {columns.map((column) => (
           <th
             key={column.key}
-            className="px-4 py-2"
+            className="px-4 py-2 cursor-pointer"
             onClick={() => handleHeaderClick(column.key)}
           >
             {column.header}

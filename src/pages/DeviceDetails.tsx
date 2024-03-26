@@ -3,14 +3,16 @@ import {
   useFetchDeviceDetails,
   useFetchDeviceVulnerabilities,
 } from "../api/devices";
-import { NoItemsMsg } from "../components/States/States";
+import { ErrorMsg, LoadingMsg, NoItemsMsg } from "../components/States/States";
 import Table from "../components/Table/Table";
 
 function DeviceDetails() {
   const { id } = useParams<{ id: string }>();
-  const { data: device, isLoading: isLoadingDevice } = useFetchDeviceDetails(
-    Number(id)
-  );
+  const {
+    data: device,
+    isLoading: isLoadingDevice,
+    isError: isErrorDevice,
+  } = useFetchDeviceDetails(Number(id));
   const { data: vulnerabilities, isLoading: isLoadingVulnerabilities } =
     useFetchDeviceVulnerabilities(Number(id));
 
@@ -34,6 +36,10 @@ function DeviceDetails() {
     { key: "ExploitPresent", header: "Exploit Present" },
   ];
 
+  if (isErrorDevice) {
+    return <ErrorMsg />;
+  }
+
   if (!device) {
     return <NoItemsMsg />;
   }
@@ -51,12 +57,8 @@ function DeviceDetails() {
 
   return (
     <>
-      {isLoadingDevice && (
-        <div className="text-lg text-blue-500">Loading device...</div>
-      )}
-      {isLoadingVulnerabilities && (
-        <div className="text-lg text-blue-500">Loading vulnerabilities...</div>
-      )}
+      {isLoadingDevice && <LoadingMsg />}
+      {isLoadingVulnerabilities && <LoadingMsg />}
 
       <section className="p-4 bg-white rounded shadow">
         <h2 className="text-xl font-bold mb-4">Device Details</h2>
@@ -69,7 +71,7 @@ function DeviceDetails() {
         </div>
       </section>
 
-      {vulnerabilities && (
+      {vulnerabilities && vulnerabilities.length > 0 ? (
         <section className="p-4 bg-white rounded shadow mt-4">
           <h2 className="text-xl font-bold mb-4">Vulnerabilities</h2>
           <Table
@@ -82,6 +84,8 @@ function DeviceDetails() {
             rowKey="CVE"
           />
         </section>
+      ) : (
+        <NoItemsMsg />
       )}
     </>
   );
